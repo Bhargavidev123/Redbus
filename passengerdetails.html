@@ -1,0 +1,229 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Red Bus Ticket Booking</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f7f7f7;
+        }
+        .container {
+            max-width: 700px;
+            margin: 50px auto;
+            background: #fff;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+        h1 {
+            color: #e74c3c;
+            margin-bottom: 20px;
+        }
+        label {
+            display: block;
+            text-align: left;
+            margin: 15px 0 5px;
+            font-weight: bold;
+        }
+        input {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 16px;
+        }
+        button {
+            background-color: #e74c3c;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            margin-top: 10px;
+        }
+        button:hover {
+            background-color: #c0392b;
+        }
+        .ticket {
+            margin-top: 20px;
+            padding: 20px;
+            border: 2px dashed #555;
+            border-radius: 10px;
+            background-color: #fdfdfd;
+            display: none;
+        }
+        .ticket h2 {
+            color: #2c3e50;
+        }
+        .ticket p {
+            font-size: 18px;
+            margin: 8px 0;
+        }
+
+
+        /* Tablet view */
+        @media (max-width: 768px) {
+        .container {
+            max-width: 90%;
+            padding: 20px;
+        }
+
+        h1 {
+            font-size: 22px;
+        }
+
+        input {
+            padding: 8px;
+            font-size: 14px;
+        }
+
+        button {
+            padding: 10px;
+            font-size: 14px;
+        }
+
+        .ticket p {
+            font-size: 16px;
+        }
+    }
+
+    /* Mobile view */
+    @media (max-width: 500px) {
+        .container {
+            max-width: 95%;
+            margin: 20px auto;
+            padding: 15px;
+            box-shadow: none; /* Remove shadow for simplicity */
+        }
+
+        h1 {
+            font-size: 20px;
+        }
+
+        input {
+            padding: 6px;
+            font-size: 14px;
+        }
+
+        button {
+            padding: 8px;
+            font-size: 12px;
+        }
+
+        .ticket p {
+            font-size: 14px;
+        }
+    }
+</style>
+
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Red Bus Ticket Booking</h1>
+        <form id="ticket-form">
+            <label for="name">Passenger Name:</label>
+            <input type="text" id="name" placeholder="Enter your name" required>
+
+            <label for="age">Age:</label>
+            <input type="text" id="age" placeholder="Enter your age" required>
+
+            <label for="from">From:</label>
+            <input type="text" id="from" placeholder="Departure city" required>
+
+            <label for="to">To:</label>
+            <input type="text" id="to" placeholder="Destination city" required>
+
+            <label for="date">Date of Journey:</label>
+            <input type="date" id="date" required>
+
+            <label for="ticket-number">Ticket Number:</label>
+            <input type="text" id="ticket-number" placeholder="Enter your ticket number" required>
+
+            <label for="total-cost">Total Cost:</label>
+            <input type="text" id="total-cost" placeholder="Enter total cost" required>
+
+            <button type="button" onclick="generateTicket()">Book Ticket</button>
+        </form>
+
+        <div id="ticket" class="ticket">
+            <!-- Ticket Details Will Appear Here -->
+        </div>
+    </div>
+
+    <!-- Include jsPDF Library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.4.0/jspdf.umd.min.js"></script>
+    <script>
+        function generateTicket() {
+            // Retrieve form values
+            const name = document.getElementById('name').value;
+            const age = document.getElementById('age').value;
+            const from = document.getElementById('from').value;
+            const to = document.getElementById('to').value;
+            const date = document.getElementById('date').value;
+            const ticketNumber = document.getElementById('ticket-number').value;
+            const totalCost = document.getElementById('total-cost').value;
+
+            // Validate inputs
+            if (name && age && from && to && date && ticketNumber && totalCost) {
+                // Generate ticket details
+                const ticketDiv = document.getElementById('ticket');
+                ticketDiv.innerHTML = `
+                    <h2>Red Bus Ticket</h2>
+                    <p><strong>Passenger Name:</strong> ${name}</p>
+                    <p><strong>Age:</strong> ${age}</p>
+                    <p><strong>From:</strong> ${from}</p>
+                    <p><strong>To:</strong> ${to}</p>
+                    <p><strong>Date of Journey:</strong> ${date}</p>
+                    <p><strong>Ticket Number:</strong> ${ticketNumber}</p>
+                    <p><strong>Total Cost:</strong> ${totalCost}</p>
+                    <p><strong>Thank you for choosing Red Bus!</strong></p>
+                    <button onclick="downloadPDF()">Download PDF</button>
+                `;
+                ticketDiv.style.display = 'block';
+            } else {
+                alert('Please fill in all fields!');
+            }
+        }
+
+        async function downloadPDF() {
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+
+            // Retrieve ticket details
+            const name = document.getElementById('name').value;
+            const age = document.getElementById('age').value;
+            const from = document.getElementById('from').value;
+            const to = document.getElementById('to').value;
+            const date = document.getElementById('date').value;
+            const ticketNumber = document.getElementById('ticket-number').value;
+            const totalCost = document.getElementById('total-cost').value;
+
+            // Add content to the PDF
+            doc.setFont("Helvetica", "bold");
+            doc.text("Red Bus Ticket", 10, 10);
+            doc.setFont("Helvetica", "normal");
+            doc.text(`Passenger Name: ${name}`, 10, 20);
+            doc.text(`Age: ${age}`, 10, 30);
+            doc.text(`From: ${from}`, 10, 40);
+            doc.text(`To: ${to}`, 10, 50);
+            doc.text(`Date of Journey: ${date}`, 10, 60);
+            doc.text(`Ticket Number: ${ticketNumber}`, 10, 70);
+            doc.text(`Total Cost: ${totalCost}`, 10, 80);
+
+            // Save the PDF
+            doc.save("RedBusTicket.pdf");
+        }
+    </script>
+</body>
+</html>
+
